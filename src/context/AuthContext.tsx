@@ -25,6 +25,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  
+  const isAdmin = profile?.role === 'admin' || (user?.email === 'irankundasteve22@gmail.com' && user?.emailVerified);
 
   useEffect(() => {
     let unsubProfile: (() => void) | undefined;
@@ -42,16 +44,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setProfile(docSnap.data() as UserProfile);
           } else {
             // Create initial profile if it doesn't exist
+            const isBootstrapAdmin = currentUser.email === 'irankundasteve22@gmail.com' && currentUser.emailVerified;
             const initialProfile: UserProfile = {
               uid: currentUser.uid,
               displayName: currentUser.displayName || '',
               email: currentUser.email || '',
               photoURL: currentUser.photoURL || '',
-              role: 'user' // Default role
+              role: isBootstrapAdmin ? 'admin' : 'user'
             };
             setDoc(userDocRef, initialProfile);
             setProfile(initialProfile);
           }
+          setLoading(false);
+        }, (error) => {
+          console.error("Profile snapshot error:", error);
           setLoading(false);
         });
       } else {
@@ -83,8 +89,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.error('Sign out error:', error);
     }
   };
-
-  const isAdmin = profile?.role === 'admin';
 
   return (
     <AuthContext.Provider value={{ user, profile, loading, isAdmin, signIn, logout }}>

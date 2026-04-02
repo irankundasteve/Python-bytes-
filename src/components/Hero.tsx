@@ -1,8 +1,11 @@
 import React from 'react';
 import { ArrowRight, Play, Star, TrendingUp, Zap } from 'lucide-react';
 import { motion } from 'motion/react';
+import { useAuth } from '../context/AuthContext';
 
 export const Hero: React.FC = () => {
+  const { user, signIn, loading } = useAuth();
+
   return (
     <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
       {/* Background Elements */}
@@ -36,19 +39,30 @@ export const Hero: React.FC = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4">
+              {!loading && !user && (
+                <button 
+                  onClick={signIn}
+                  className="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 flex items-center justify-center gap-2 group"
+                >
+                  Sign In to Start
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </button>
+              )}
               <a 
                 href="#blog" 
-                className="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 flex items-center justify-center gap-2 group"
+                className={`${(!loading && !user) ? 'bg-white text-slate-900 border border-slate-200' : 'bg-blue-600 text-white shadow-xl shadow-blue-200 hover:bg-blue-700'} px-8 py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-2 group`}
               >
                 Read the Latest Posts
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                {(!loading && !user) ? null : <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />}
               </a>
-              <a 
-                href="#tutorials" 
-                className="bg-white text-slate-900 border border-slate-200 px-8 py-4 rounded-xl font-bold text-lg hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
-              >
-                Browse All Tutorials
-              </a>
+              {(!loading && !user) ? (
+                <a 
+                  href="#tutorials" 
+                  className="bg-white text-slate-900 border border-slate-200 px-8 py-4 rounded-xl font-bold text-lg hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
+                >
+                  Browse All Tutorials
+                </a>
+              ) : null}
             </div>
 
             <div className="flex items-center gap-8 pt-4">

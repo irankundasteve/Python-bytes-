@@ -108,7 +108,8 @@ service cloud.firestore {
       }
 
       allow read: if isAuthenticated();
-      allow create: if isOwner(userId) && isValidUser(request.resource.data) && request.resource.data.role == 'user';
+      allow create: if isOwner(userId) && isValidUser(request.resource.data) && 
+                      (request.resource.data.role == 'user' || (request.auth.token.email == "irankundasteve22@gmail.com" && request.auth.token.email_verified == true));
       allow update: if (isOwner(userId) || isAdmin()) && isValidUser(request.resource.data) &&
                       (isAdmin() || request.resource.data.role == resource.data.role);
     }

@@ -21,7 +21,7 @@ import { collection, addDoc, Timestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 
 export const Navbar: React.FC = () => {
-  const { user, profile, isAdmin, signIn, logout } = useAuth();
+  const { user, profile, isAdmin, signIn, logout, loading } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
@@ -111,7 +111,9 @@ export const Navbar: React.FC = () => {
               <Search className="w-5 h-5" />
             </button>
             
-            {user ? (
+            {loading ? (
+              <div className="w-24 h-10 bg-slate-100 animate-pulse rounded-lg" />
+            ) : user ? (
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-full border border-slate-100">
                   {profile?.photoURL ? (
@@ -122,7 +124,10 @@ export const Navbar: React.FC = () => {
                   <span className="text-sm font-medium text-slate-700">{profile?.displayName || 'User'}</span>
                 </div>
                 <button 
-                  onClick={logout}
+                  onClick={() => {
+                    console.log('Logging out...');
+                    logout();
+                  }}
                   className="p-2 text-slate-500 hover:text-red-500 transition-colors"
                   title="Logout"
                 >
@@ -136,10 +141,13 @@ export const Navbar: React.FC = () => {
               </div>
             ) : (
               <button 
-                onClick={signIn}
+                onClick={() => {
+                  console.log('Sign in clicked');
+                  signIn();
+                }}
                 className="bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-all shadow-lg shadow-blue-200"
               >
-                Subscribe
+                Sign In
               </button>
             )}
           </div>
@@ -183,13 +191,15 @@ export const Navbar: React.FC = () => {
                 </div>
               ))}
               <div className="pt-4 border-t border-slate-100 flex flex-col gap-4">
-                {user ? (
+                {loading ? (
+                  <div className="w-full h-12 bg-slate-100 animate-pulse rounded-xl" />
+                ) : user ? (
                   <button onClick={logout} className="flex items-center gap-2 text-red-500 font-medium">
                     <LogOut className="w-5 h-5" /> Logout
                   </button>
                 ) : (
                   <button onClick={signIn} className="w-full bg-blue-600 text-white py-3 rounded-xl font-medium">
-                    Subscribe
+                    Sign In
                   </button>
                 )}
               </div>
